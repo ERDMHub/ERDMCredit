@@ -5,6 +5,16 @@ VisualStudioVersion = 17.14.36301.6 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERDM.Credit.API", "ERDM.Credit.API\ERDM.Credit.API.csproj", "{97628298-AA00-4429-92CB-F81536D4D8F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERDM.Credit.Application", "ERDM.Credit.Application\ERDM.Credit.Application.csproj", "{2B665A8F-47AA-47C9-ACD5-1BC1D7970BC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERDM.Credit.Domain", "ERDM.Credit.Domain\ERDM.Credit.Domain.csproj", "{49E8F1F7-4271-4B31-A276-1C8F4308FD98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERDM.Credit.Infrastructure", "ERDM.Credit.Infrastructure\ERDM.Credit.Infrastructure.csproj", "{977974EF-9381-4004-84A6-EBD3E91C1ABF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERDM.Credit.Contracts", "ERDM.Credit.Contracts\ERDM.Credit.Contracts.csproj", "{E62DBCE7-5735-4938-A6DC-DB227329B4C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERDM.Credit.Tests", "ERDM.Credit.Tests\ERDM.Credit.Tests.csproj", "{00909489-0693-4736-95C6-5515A78894BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +25,26 @@ Global
 		{97628298-AA00-4429-92CB-F81536D4D8F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97628298-AA00-4429-92CB-F81536D4D8F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97628298-AA00-4429-92CB-F81536D4D8F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B665A8F-47AA-47C9-ACD5-1BC1D7970BC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B665A8F-47AA-47C9-ACD5-1BC1D7970BC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B665A8F-47AA-47C9-ACD5-1BC1D7970BC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B665A8F-47AA-47C9-ACD5-1BC1D7970BC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49E8F1F7-4271-4B31-A276-1C8F4308FD98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49E8F1F7-4271-4B31-A276-1C8F4308FD98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49E8F1F7-4271-4B31-A276-1C8F4308FD98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49E8F1F7-4271-4B31-A276-1C8F4308FD98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{977974EF-9381-4004-84A6-EBD3E91C1ABF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{977974EF-9381-4004-84A6-EBD3E91C1ABF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{977974EF-9381-4004-84A6-EBD3E91C1ABF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{977974EF-9381-4004-84A6-EBD3E91C1ABF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E62DBCE7-5735-4938-A6DC-DB227329B4C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E62DBCE7-5735-4938-A6DC-DB227329B4C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E62DBCE7-5735-4938-A6DC-DB227329B4C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E62DBCE7-5735-4938-A6DC-DB227329B4C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00909489-0693-4736-95C6-5515A78894BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00909489-0693-4736-95C6-5515A78894BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00909489-0693-4736-95C6-5515A78894BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00909489-0693-4736-95C6-5515A78894BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
