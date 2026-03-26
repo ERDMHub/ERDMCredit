@@ -1,0 +1,6 @@
+@ERDM.Credit.API_HostAddress = http://localhost:5207
+
+GET {{ERDM.Credit.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
