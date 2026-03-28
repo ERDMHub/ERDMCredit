@@ -9,7 +9,7 @@ Replace `@` with `%40` in the password:
 ```json
 {
   "MongoDbSettings": {
-    "ConnectionString": "mongodb+srv://erdm-db-user:DubaiDutyFree%402026@erdm-credit-cluster.zhupwb4.mongodb.net/?retryWrites=true&w=majority&appName=erdm-credit-cluster",
+    "ConnectionString": "dummy",
     "DatabaseName": "ERDM_Credit",
     "CollectionPrefix": "credit_",
     "MinPoolSize": 10,
