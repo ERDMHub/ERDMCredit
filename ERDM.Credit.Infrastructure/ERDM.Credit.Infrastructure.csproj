@@ -6,4 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ERDM.Core" Version="13.0.0" />
+    <PackageReference Include="ERDMCore.Infrastructure.MongoDB" Version="13.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ERDM.Credit.Domain\ERDM.Credit.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
