@@ -216,5 +216,33 @@ namespace ERDM.Credit.Application.Services
             return x => (string.IsNullOrEmpty(query.Status) || x.Status == query.Status) &&
                         (string.IsNullOrEmpty(query.CustomerId) || x.CustomerId == query.CustomerId);
         }
+
+        public async Task<ApiResponse<PaginatedResponse<CreditApplicationResponseDto>>> GetAllAsync()
+        {
+            try
+            {
+              
+
+                var result = await _repository.GeCreditApplicationsAsync();
+
+                var response = new PaginatedResponse<CreditApplicationResponseDto>
+                {
+                    PageNumber =100,
+                    PageSize = 100,
+                    TotalCount = result.Count(),
+                    TotalPages = 100,
+                    HasPrevious = false,
+                    HasNext = false,
+                    Data = _mapper.Map<IEnumerable<CreditApplicationResponseDto>>(result)
+                };
+
+                return ApiResponse<PaginatedResponse<CreditApplicationResponseDto>>.Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving applications");
+                return ApiResponse<PaginatedResponse<CreditApplicationResponseDto>>.Fail(ex.Message);
+            }
+        }
     }
 }

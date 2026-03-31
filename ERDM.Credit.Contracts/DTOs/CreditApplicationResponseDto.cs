@@ -3,6 +3,10 @@ namespace ERDM.Credit.Contracts.DTOs
 {
     public class CreditApplicationResponseDto
     {
+        public CreditApplicationResponseDto()
+        {
+            
+        }
         public string Id { get; set; }
         public string ApplicationId { get; set; }
         public string CustomerId { get; set; }

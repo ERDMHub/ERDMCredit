@@ -2,6 +2,10 @@
 {
     public class FinancialProfileDto
     {
+        public FinancialProfileDto()
+        {
+            
+        }
         public decimal MonthlyExpenses { get; set; }
         public decimal ExistingDebt { get; set; }
         public int CreditScore { get; set; }
