@@ -2,6 +2,8 @@
 {
     public class CreateCreditApplicationDto
     {
+        public CreateCreditApplicationDto() { } 
+
         public string CustomerId { get; set; }
         public CustomerProfileDto CustomerProfile { get; set; }
         public string ProductType { get; set; }

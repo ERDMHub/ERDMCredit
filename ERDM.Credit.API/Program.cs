@@ -4,10 +4,11 @@ using ERDM.Credit.Domain.Interfaces;
 using ERDM.Credit.Infrastructure.Repositories;
 using ERDMCore.Infrastructure.MongoDB.Settings;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Serilog;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,12 +66,7 @@ builder.Services.AddScoped<IMongoDatabase>(sp =>
     return client.GetDatabase(settings.DatabaseName);
 });
 
-// Register ONLY the concrete repository
 builder.Services.AddScoped<ICreditApplicationRepository, CreditApplicationRepository>();
-
-// ✅ REMOVED the abstract repository registration
-// builder.Services.AddScoped(typeof(MongoRepository<>), typeof(MongoRepository<>));
-
 builder.Services.AddScoped<ICreditApplicationService, CreditApplicationService>();
 
 builder.Services.AddAutoMapper(cfg =>
@@ -94,17 +90,34 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
         options.JsonSerializerOptions.WriteIndented = true;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
 
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "ERDM Credit Management API",
         Version = "v1",
-        Description = "API for managing credit applications and underwriting"
+        Title = "ERDM Credit Management API",
+        Description = "API for managing credit applications and underwriting",
+        Contact = new OpenApiContact
+        {
+            Name = "ERDM Support",
+            Email = "support@erdm.com"
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Use under LICX",
+            Url = new Uri("https://example.com/license")
+        }
     });
+
+    c.CustomSchemaIds(type => type.FullName);
+    c.UseAllOfForInheritance();
+    c.UseOneOfForPolymorphism();
 });
 
 builder.Services.AddCors(options =>
@@ -127,6 +140,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "ERDM Credit API V1");
+        c.RoutePrefix = "swagger";
     });
 }
 

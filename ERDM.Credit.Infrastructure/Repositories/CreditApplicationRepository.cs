@@ -122,5 +122,12 @@ namespace ERDM.Credit.Infrastructure.Repositories
             // pageNumber, pageSize, predicate, sortBy, sortDescending
             return await GetPaginatedAsync(pageNumber, pageSize, predicate, sortExpression, sortDescending);
         }
+
+        public async Task<IEnumerable<CreditApplication>> GeCreditApplicationsAsync()
+        {
+            var sort = Builders<CreditApplication>.Sort.Descending(x => x.CreatedAt);
+
+            return await _collection.Find(Builders<CreditApplication>.Filter.Empty).Sort(sort).ToListAsync();
+        }
     }
 }

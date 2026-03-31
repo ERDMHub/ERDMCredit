@@ -3,6 +3,10 @@ namespace ERDM.Credit.Contracts.DTOs
 {
     public class CreditCardDto
     {
+        public CreditCardDto()
+        {
+            
+        }
         public string Issuer { get; set; }
         public decimal CreditLimit { get; set; }
         public decimal CurrentBalance { get; set; }

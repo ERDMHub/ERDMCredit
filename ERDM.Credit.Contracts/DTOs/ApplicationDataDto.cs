@@ -2,6 +2,10 @@
 {
     public class ApplicationDataDto
     {
+        public ApplicationDataDto()
+        {
+            
+        }
         public string EmploymentStatus { get; set; }
         public decimal AnnualIncome { get; set; }
         public string EmployerName { get; set; }

@@ -2,6 +2,10 @@
 {
     public class EmploymentDto
     {
+        public EmploymentDto()
+        {
+            
+        }
         public string EmployerName { get; set; }
         public string JobTitle { get; set; }
         public decimal MonthlyIncome { get; set; }

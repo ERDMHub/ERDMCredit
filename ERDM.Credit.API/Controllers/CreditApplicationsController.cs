@@ -22,8 +22,14 @@ namespace ERDM.Credit.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCreditApplicationDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _service.CreateAsync(dto);
-            return result.Success ? Ok(result) : BadRequest(result);
+
+            return result.Success
+                ? CreatedAtAction(nameof(GetById), new { id = result.Data.Id }, result)
+                : BadRequest(result);
         }
 
         [HttpGet("{id}")]
@@ -44,7 +50,7 @@ namespace ERDM.Credit.API.Controllers
         public async Task<IActionResult> GetAll([FromQuery] ApplicationQueryDto query)
         {
             var result = await _service.GetAllAsync(query);
-            return Ok(result);
+            return result.Success ? Ok(result) : BadRequest(result);
         }
 
         [HttpPost("{id}/submit")]
@@ -57,6 +63,9 @@ namespace ERDM.Credit.API.Controllers
         [HttpPost("{id}/approve")]
         public async Task<IActionResult> Approve(string id, [FromBody] ApproveApplicationDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _service.ApproveAsync(id, dto);
             return result.Success ? Ok(result) : BadRequest(result);
         }
@@ -64,6 +73,9 @@ namespace ERDM.Credit.API.Controllers
         [HttpPost("{id}/decline")]
         public async Task<IActionResult> Decline(string id, [FromBody] DeclineApplicationDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _service.DeclineAsync(id, dto);
             return result.Success ? Ok(result) : BadRequest(result);
         }

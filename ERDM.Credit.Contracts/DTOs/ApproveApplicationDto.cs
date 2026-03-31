@@ -2,6 +2,10 @@
 {
     public class ApproveApplicationDto
     {
+        public ApproveApplicationDto()
+        {
+            
+        }
         public decimal ApprovedAmount { get; set; }
         public decimal InterestRate { get; set; }
         public string RiskGrade { get; set; }

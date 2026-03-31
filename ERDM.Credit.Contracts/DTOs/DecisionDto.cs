@@ -2,6 +2,10 @@
 {
     public class DecisionDto
     {
+        public DecisionDto()
+        {
+            
+        }
         public string Status { get; set; }
         public decimal? ApprovedAmount { get; set; }
         public decimal? InterestRate { get; set; }

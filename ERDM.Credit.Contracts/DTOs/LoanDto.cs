@@ -2,6 +2,10 @@
 {
     public class LoanDto
     {
+        public LoanDto()
+        {
+            
+        }
         public string LoanType { get; set; }
         public decimal OriginalAmount { get; set; }
         public decimal CurrentBalance { get; set; }
