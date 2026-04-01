@@ -1,0 +1,14 @@
+﻿namespace ERDM.Credit.Domain.Entities
+{
+    public class UnderwritingCondition
+    {
+        public string ConditionId { get; set; } = Guid.NewGuid().ToString();
+        public string ConditionType { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public bool IsMet { get; set; }
+        public DateTime? MetDate { get; set; }
+        public string? MetBy { get; set; }
+        public DateTime DueDate { get; set; }
+    }
+
+}
