@@ -89,6 +89,8 @@ namespace ERDM.Credit.Domain.Entities
 
             Status = "SUBMITTED";
             AddUnderwritingHistory("SUBMISSION", "COMPLETED", "Application submitted");
+
+            // Raise domain event
             AddDomainEvent(new CreditApplicationSubmittedEvent(this));
         }
 
@@ -133,6 +135,8 @@ namespace ERDM.Credit.Domain.Entities
             Status = "APPROVED";
             ExpiresAt = null;
             AddUnderwritingHistory("UNDERWRITING", "COMPLETED", $"Approved for {approvedAmount:C}");
+
+            // Raise domain event
             AddDomainEvent(new CreditApplicationApprovedEvent(this));
         }
 
@@ -151,6 +155,8 @@ namespace ERDM.Credit.Domain.Entities
 
             Status = "DECLINED";
             AddUnderwritingHistory("UNDERWRITING", "COMPLETED", $"Declined: {string.Join(", ", declineReasons)}");
+
+            // Raise domain event
             AddDomainEvent(new CreditApplicationDeclinedEvent(this));
         }
 

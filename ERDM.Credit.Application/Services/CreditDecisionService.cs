@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ERDM.Credit.Contracts.DTOs.CreditDecisionDtos;
 using ERDM.Credit.Contracts.Wrapper;
+using ERDM.Credit.Domain.DomainEvents;
 using ERDM.Credit.Domain.Entities;
 using ERDM.Credit.Domain.Enums;
 using ERDM.Credit.Domain.Interfaces;
@@ -35,6 +36,10 @@ namespace ERDM.Credit.Application.Services
                     return ApiResponse<CreditDecisionResponseDto>.Fail($"Decision already exists for application {dto.ApplicationId}");
 
                 var decision = _mapper.Map<CreditDecision>(dto);
+
+                // Call entity method to raise event
+                decision.RaiseCreatedEvent();
+
                 var result = await _repository.AddAsync(decision);
 
                 var response = _mapper.Map<CreditDecisionResponseDto>(result);
@@ -167,7 +172,15 @@ namespace ERDM.Credit.Application.Services
                 if (decision == null)
                     return ApiResponse<CreditDecisionResponseDto>.Fail($"Credit decision with ID {id} not found");
 
-                _mapper.Map(dto, decision);
+                // Update decision properties
+                decision.ApprovedAmount = dto.ApprovedAmount ?? decision.ApprovedAmount;
+                decision.ApprovedInterestRate = dto.ApprovedInterestRate ?? decision.ApprovedInterestRate;
+                decision.ApprovedTermMonths = dto.ApprovedTermMonths ?? decision.ApprovedTermMonths;
+                decision.UnderwriterComments = dto.Comments ?? decision.UnderwriterComments;
+
+                // Call entity method to raise events and update status
+                decision.RaiseApprovedEvent(dto.ApprovedBy);
+
                 await _repository.UpdateAsync(decision);
 
                 var response = _mapper.Map<CreditDecisionResponseDto>(decision);
@@ -188,7 +201,13 @@ namespace ERDM.Credit.Application.Services
                 if (decision == null)
                     return ApiResponse<CreditDecisionResponseDto>.Fail($"Credit decision with ID {id} not found");
 
-                _mapper.Map(dto, decision);
+                // Update decision properties
+                decision.DeclineReasons = dto.DeclineReasons;
+                decision.DeclineComments = dto.Comments;
+
+                // Call entity method to raise events and update status
+                decision.RaiseDeclinedEvent(dto.DeclinedBy);
+
                 await _repository.UpdateAsync(decision);
 
                 var response = _mapper.Map<CreditDecisionResponseDto>(decision);
@@ -212,11 +231,11 @@ namespace ERDM.Credit.Application.Services
                 if (!decision.IsCounterOffer)
                     return ApiResponse<CreditDecisionResponseDto>.Fail("This decision is not a counter offer");
 
-                var success = await _repository.AcceptCounterOfferAsync(decision.DecisionId, dto.AcceptedBy);
-                if (!success)
-                    return ApiResponse<CreditDecisionResponseDto>.Fail("Failed to accept counter offer");
+                // Call entity method to raise events and update
+                decision.RaiseCounterOfferAcceptedEvent(dto.AcceptedBy);
 
-                decision = await _repository.GetByIdAsync(id);
+                await _repository.UpdateAsync(decision);
+
                 var response = _mapper.Map<CreditDecisionResponseDto>(decision);
                 return ApiResponse<CreditDecisionResponseDto>.Ok(response, "Counter offer accepted successfully");
             }
@@ -227,6 +246,7 @@ namespace ERDM.Credit.Application.Services
             }
         }
 
+
         public async Task<ApiResponse<CreditDecisionResponseDto>> UpdateDecisionStatusAsync(string id, string status, string updatedBy)
         {
             try
@@ -236,12 +256,12 @@ namespace ERDM.Credit.Application.Services
                     return ApiResponse<CreditDecisionResponseDto>.Fail($"Credit decision with ID {id} not found");
 
                 var newStatus = Enum.Parse<DecisionStatus>(status);
-                var success = await _repository.UpdateDecisionStatusAsync(decision.DecisionId, newStatus, updatedBy);
 
-                if (!success)
-                    return ApiResponse<CreditDecisionResponseDto>.Fail("Failed to update decision status");
+                // Call entity method to raise event
+                decision.RaiseStatusChangedEvent(newStatus, updatedBy);
 
-                decision = await _repository.GetByIdAsync(id);
+                await _repository.UpdateAsync(decision);
+
                 var response = _mapper.Map<CreditDecisionResponseDto>(decision);
                 return ApiResponse<CreditDecisionResponseDto>.Ok(response, $"Decision status updated to {status}");
             }
@@ -261,6 +281,24 @@ namespace ERDM.Credit.Application.Services
                     return ApiResponse<CreditDecisionResponseDto>.Fail($"Credit decision with ID {id} not found");
 
                 var updatedConditions = _mapper.Map<List<UnderwritingCondition>>(conditions);
+
+                // Get existing conditions for comparison
+                var existingConditions = decision.Conditions ?? new List<UnderwritingCondition>();
+
+                // Identify new conditions
+                var newConditions = updatedConditions
+                    .Where(uc => !existingConditions.Any(c => c.ConditionId == uc.ConditionId))
+                    .ToList();
+
+                // Identify conditions to update
+                var conditionsToUpdate = updatedConditions
+                    .Where(uc => existingConditions.Any(c => c.ConditionId == uc.ConditionId))
+                    .ToList();
+
+                // Call entity method to raise events and update conditions
+                decision.RaiseConditionsUpdatedEvent(newConditions, conditionsToUpdate, "system");
+
+                // Save all conditions
                 var success = await _repository.UpdateConditionsAsync(decision.DecisionId, updatedConditions);
 
                 if (!success)
@@ -289,12 +327,12 @@ namespace ERDM.Credit.Application.Services
                 if (condition == null)
                     return ApiResponse<bool>.Fail($"Condition {conditionId} not found");
 
-                condition.IsMet = true;
-                condition.MetDate = DateTime.UtcNow;
-                condition.MetBy = metBy;
+                // Call entity method to raise event and update condition
+                decision.RaiseConditionMetEvent(conditionId, metBy);
 
-                var success = await _repository.UpdateConditionsAsync(decisionId, decision.Conditions ?? new List<UnderwritingCondition>());
-                return ApiResponse<bool>.Ok(success, success ? "Condition marked as met" : "Failed to update condition");
+                await _repository.UpdateAsync(decision);
+
+                return ApiResponse<bool>.Ok(true, "Condition marked as met");
             }
             catch (Exception ex)
             {
