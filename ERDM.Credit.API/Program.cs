@@ -1,4 +1,5 @@
-﻿using ERDM.Credit.Application.Mappings;
+﻿using ERDM.Credit.Application.Mappings.AccountProfiles;
+using ERDM.Credit.Application.Mappings.CreditApplicationProfiles;
 using ERDM.Credit.Application.Services;
 using ERDM.Credit.Domain.Interfaces;
 using ERDM.Credit.Infrastructure.Repositories;
@@ -69,8 +70,12 @@ builder.Services.AddScoped<IMongoDatabase>(sp =>
 builder.Services.AddScoped<ICreditApplicationRepository, CreditApplicationRepository>();
 builder.Services.AddScoped<ICreditApplicationService, CreditApplicationService>();
 
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+
 builder.Services.AddAutoMapper(cfg =>
 {
+    //CreditApplication
     cfg.AddProfile<CreditApplicationMappingProfile>();
     cfg.AddProfile<AddressMappingProfile>();
     cfg.AddProfile<ApplicationDataMappingProfile>();
@@ -83,6 +88,19 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile<FinancialProfileMappingProfile>();
     cfg.AddProfile<LoanMappingProfile>();
     cfg.AddProfile<PaginationMappingProfile>();
+
+    //Account
+    cfg.AddProfile<AccountProfile>();
+    cfg.AddProfile<AccountStatusProfile>();
+    cfg.AddProfile<AccountPaymentProfile>();
+    cfg.AddProfile<AccountFinancialProfile>();
+    cfg.AddProfile<AccountDisbursementProfile>();
+    cfg.AddProfile<AccountCollateralProfile>();
+    cfg.AddProfile<AccountMetadataProfile>();
+    cfg.AddProfile<AccountStatusHistoryProfile>();
+    cfg.AddProfile<AccountReportProfile>();
+    cfg.AddProfile<AccountBulkProfile>();
+    cfg.AddProfile<AccountQueryProfile>();
 });
 
 builder.Services.AddControllers()

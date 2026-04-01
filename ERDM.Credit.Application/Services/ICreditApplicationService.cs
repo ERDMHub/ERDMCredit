@@ -1,4 +1,5 @@
-﻿using ERDM.Credit.Contracts.DTOs;
+﻿using ERDM.Credit.Contracts.DTOs.AccountDtos;
+using ERDM.Credit.Contracts.DTOs.CreditApplicationDtos;
 using ERDM.Credit.Contracts.Wrapper;
 
 

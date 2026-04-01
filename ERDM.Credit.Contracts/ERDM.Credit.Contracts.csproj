@@ -10,4 +10,8 @@
     <PackageReference Include="ERDM.Core" Version="14.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ERDM.Credit.Domain\ERDM.Credit.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
