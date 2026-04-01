@@ -1,5 +1,6 @@
 ﻿using ERDM.Credit.Application.Services;
-using ERDM.Credit.Contracts.DTOs;
+using ERDM.Credit.Contracts.DTOs.AccountDtos;
+using ERDM.Credit.Contracts.DTOs.CreditApplicationDtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERDM.Credit.API.Controllers

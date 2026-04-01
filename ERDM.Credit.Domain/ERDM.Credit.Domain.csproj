@@ -10,4 +10,12 @@
     <PackageReference Include="ERDM.Core" Version="14.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="D:\ERDM\ERDMCredit\ERDM.Credit.Domain\Entities\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="D:\ERDM\ERDMCredit\ERDM.Credit.Domain\Entities\.editorconfig" />
+  </ItemGroup>
+
 </Project>
