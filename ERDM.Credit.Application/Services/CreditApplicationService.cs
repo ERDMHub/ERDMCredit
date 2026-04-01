@@ -142,6 +142,7 @@ namespace ERDM.Credit.Application.Services
                 if (application == null)
                     return ApiResponse<CreditApplicationResponseDto>.Fail($"Application with ID {id} not found");
 
+                // This calls the entity method which raises the event internally
                 application.Submit();
                 await _repository.UpdateAsync(application);
 
@@ -163,6 +164,7 @@ namespace ERDM.Credit.Application.Services
                 if (application == null)
                     return ApiResponse<CreditApplicationResponseDto>.Fail($"Application with ID {id} not found");
 
+                // This calls the entity method which raises the event internally
                 application.Approve(dto.ApprovedAmount, dto.InterestRate, dto.RiskGrade,
                     dto.ReasonCodes, dto.DecidedBy);
                 await _repository.UpdateAsync(application);
@@ -185,6 +187,7 @@ namespace ERDM.Credit.Application.Services
                 if (application == null)
                     return ApiResponse<CreditApplicationResponseDto>.Fail($"Application with ID {id} not found");
 
+                // This calls the entity method which raises the event internally
                 application.Decline(dto.DeclineReasons, dto.DecidedBy);
                 await _repository.UpdateAsync(application);
 
