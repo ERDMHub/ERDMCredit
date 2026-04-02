@@ -2,6 +2,7 @@
 using ERDM.Credit.Application.Mappings.CreditApplicationProfiles;
 using ERDM.Credit.Application.Mappings.CreditDecisionProfiles;
 using ERDM.Credit.Application.Mappings.LimitHistoryProfiles;
+using ERDM.Credit.Application.Mappings.RiskScoreProfiles;
 using ERDM.Credit.Application.Services;
 using ERDM.Credit.Domain.Interfaces;
 using ERDM.Credit.Infrastructure.Repositories;
@@ -81,6 +82,9 @@ builder.Services.AddScoped<ICreditDecisionService, CreditDecisionService>();
 builder.Services.AddScoped<ILimitHistoryRepository, LimitHistoryRepository>();
 builder.Services.AddScoped<ILimitHistoryService, LimitHistoryService>();
 
+builder.Services.AddScoped<IRiskScoreService, RiskScoreService>();
+builder.Services.AddScoped<IRiskScoreRepository, RiskScoreRepository>();
+
 builder.Services.AddAutoMapper(cfg =>
 {
     //CreditApplication
@@ -115,6 +119,9 @@ builder.Services.AddAutoMapper(cfg =>
 
     //LimitHistory
     cfg.AddProfile<LimitHistoryProfile>();
+
+    //RRiskScore
+    cfg.AddProfile<RiskScoreProfile>();
 });
 
 builder.Services.AddControllers()
