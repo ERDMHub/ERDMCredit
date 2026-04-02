@@ -31,12 +31,21 @@ jobs:
         --output ./publish/api \
         -p:EnvironmentName=Production
 
+    - name: Remove logs directory from publish (local only)
+      run: |
+        if (Test-Path "./publish/api/logs") {
+          Remove-Item -Path "./publish/api/logs" -Recurse -Force
+          Write-Host "Removed logs directory from local publish output"
+        }
+
     - name: Deploy API to Server via FTP
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.0
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/api/
         server-dir: ${{ secrets.FTP_API_PATH }}/
-        dangerous-clean-slate: true
+        exclude: |
+          **/logs/**
+          **/*.log
