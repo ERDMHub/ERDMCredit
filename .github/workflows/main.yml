@@ -26,10 +26,7 @@ jobs:
 
     - name: Publish ERDM.Credit.API with Production config
       run: |
-        dotnet publish ERDM.Credit.API/ERDM.Credit.API.csproj \
-        --configuration Release \
-        --output ./publish/api \
-        -p:EnvironmentName=Production
+        dotnet publish ERDM.Credit.API/ERDM.Credit.API.csproj --configuration Release --output ./publish/api -p:EnvironmentName=Production
 
     - name: Remove logs directory from publish (local only)
       run: |
