@@ -1,0 +1,12 @@
+namespace ERDM.Credit.Contracts.DTOs.RiskScoreDtos
+{
+   public class RiskScoreMetadataDto
+    {
+        public string? Source { get; set; }
+        public string? IpAddress { get; set; }
+        public string? UserAgent { get; set; }
+        public string? WorkflowId { get; set; }
+        public Dictionary<string, object>? AdditionalData { get; set; }
+    }
+
+}
