@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 
 namespace ERDM.Credit.Infrastructure.Repositories
 {
-     public class LimitHistoryRepository : MongoRepository<LimitHistory>, ILimitHistoryRepository
+    public class LimitHistoryRepository : MongoRepository<LimitHistory>, ILimitHistoryRepository
     {
         public LimitHistoryRepository(IMongoDatabase database, IOptions<MongoDbSettings> settings, ILogger<LimitHistoryRepository> logger)
             : base(database, settings, logger)
@@ -66,21 +66,33 @@ namespace ERDM.Credit.Infrastructure.Repositories
 
         public override async Task<LimitHistory> AddAsync(LimitHistory entity, CancellationToken cancellationToken = default)
         {
+            // Generate LimitHistoryId if not set
             if (string.IsNullOrEmpty(entity.LimitHistoryId))
-                entity.LimitHistoryId = $"LH-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}";
+                entity.LimitHistoryId =$"LH-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}";
 
+            // Set default values
             if (entity.ChangedDate == default)
                 entity.ChangedDate = DateTime.UtcNow;
 
-            // Raise domain event based on change type
-            if (entity.ChangeType == LimitChangeType.Increase || entity.ChangeType == LimitChangeType.TemporaryIncrease)
-            {
-                entity.AddDomainEvent(new LimitIncreasedEvent(entity));
-            }
-            else if (entity.ChangeType == LimitChangeType.Decrease || entity.ChangeType == LimitChangeType.TemporaryDecrease)
-            {
-                entity.AddDomainEvent(new LimitDecreasedEvent(entity));
-            }
+            if (entity.CreatedAt == default)
+                entity.CreatedAt = DateTime.UtcNow;
+
+            if (string.IsNullOrEmpty(entity.CreatedBy))
+                entity.CreatedBy = entity.ChangedBy ?? "system";
+
+            if (entity.Version == 0)
+                entity.Version = 1;
+
+            // Set ID for base repository
+            if (string.IsNullOrEmpty(entity.Id))
+                entity.Id = entity.LimitHistoryId;
+
+            // Initialize collections
+            entity.Tags ??= new List<string>();
+            entity.Metadata ??= new LimitHistoryMetadata();
+
+            // Note: Domain events should be raised in the service layer, not here
+            // The service calls entity.RaiseCreatedEvent() which adds the event
 
             return await base.AddAsync(entity, cancellationToken);
         }
@@ -253,14 +265,22 @@ namespace ERDM.Credit.Infrastructure.Repositories
         {
             var filter = Builders<LimitHistory>.Filter.And(
                 Builders<LimitHistory>.Filter.Eq(x => x.IsTemporary, true),
-                Builders<LimitHistory>.Filter.Lt(x => x.ExpiryDate, asOfDate)
+                Builders<LimitHistory>.Filter.Lt(x => x.ExpiryDate, asOfDate),
+                Builders<LimitHistory>.Filter.Gt(x => x.ExpiryDate, DateTime.MinValue)
             );
 
             var update = Builders<LimitHistory>.Update
-                .Set(x => x.UpdatedAt, DateTime.UtcNow);
+                .Set(x => x.IsTemporary, false)
+                .Set(x => x.UpdatedAt, DateTime.UtcNow)
+                .Set(x => x.UpdatedBy, "system");
 
             var result = await _collection.UpdateManyAsync(filter, update);
             return (int)result.ModifiedCount;
+        }
+
+        private string GenerateLimitHistoryId()
+        {
+            return $"LH-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}";
         }
     }
 }

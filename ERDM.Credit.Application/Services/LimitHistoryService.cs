@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ERDM.Credit.Application.Services
 {
-     public class LimitHistoryService : ILimitHistoryService
+    public class LimitHistoryService : ILimitHistoryService
     {
         private readonly ILimitHistoryRepository _repository;
         private readonly IMapper _mapper;
@@ -23,6 +23,8 @@ namespace ERDM.Credit.Application.Services
             _logger = logger;
         }
 
+        #region Create Operations
+
         public async Task<ApiResponse<LimitHistoryResponseDto>> CreateAsync(CreateLimitHistoryDto dto)
         {
             try
@@ -30,6 +32,10 @@ namespace ERDM.Credit.Application.Services
                 _logger.LogInformation("Creating limit history for account {AccountId}", dto.AccountId);
 
                 var limitHistory = _mapper.Map<LimitHistory>(dto);
+                
+                // Call entity method to raise event
+                limitHistory.RaiseCreatedEvent();
+                
                 var result = await _repository.AddAsync(limitHistory);
 
                 var response = _mapper.Map<LimitHistoryResponseDto>(result);
@@ -41,6 +47,10 @@ namespace ERDM.Credit.Application.Services
                 return ApiResponse<LimitHistoryResponseDto>.Fail(ex.Message);
             }
         }
+
+        #endregion
+
+        #region Read Operations
 
         public async Task<ApiResponse<LimitHistoryResponseDto>> GetByIdAsync(string id)
         {
@@ -182,6 +192,10 @@ namespace ERDM.Credit.Application.Services
             }
         }
 
+        #endregion
+
+        #region Update Operations
+
         public async Task<ApiResponse<LimitHistoryResponseDto>> UpdateExpiryDateAsync(string id, ExtendTemporaryLimitDto dto)
         {
             try
@@ -230,6 +244,10 @@ namespace ERDM.Credit.Application.Services
                 return ApiResponse<LimitHistoryResponseDto>.Fail(ex.Message);
             }
         }
+
+        #endregion
+
+        #region Statistics and Reports
 
         public async Task<ApiResponse<LimitHistoryStatisticsDto>> GetStatisticsAsync(DateTime? fromDate = null, DateTime? toDate = null)
         {
@@ -312,7 +330,7 @@ namespace ERDM.Credit.Application.Services
                     TotalLimitChanges = historyList.Count,
                     LastLimitChangeDate = latest?.ChangedDate ?? DateTime.UtcNow,
                     LastChangeType = latest?.ChangeType.ToString(),
-                    RecentChanges = _mapper.Map<List<LimitHistorySummaryItemDto>>(historyList.Take(10)),
+                    RecentChanges = _mapper.Map<List<LimitHistorySummaryItemDto>>(historyList.OrderByDescending(h => h.ChangedDate).Take(10)),
                     ActiveTemporaryLimits = activeTemporaryLimits
                 };
 
@@ -325,11 +343,27 @@ namespace ERDM.Credit.Application.Services
             }
         }
 
+        #endregion
+
+        #region Bulk Operations
+
         public async Task<ApiResponse<int>> BulkExpireTemporaryLimitsAsync()
         {
             try
             {
+                var expiredLimits = await _repository.GetExpiredTemporaryLimitsAsync(DateTime.UtcNow);
+                var expiredList = expiredLimits.ToList();
+                
+                foreach (var limit in expiredList)
+                {
+                    // Mark as expired in memory (repository will handle the update)
+                    limit.UpdatedAt = DateTime.UtcNow;
+                    limit.UpdatedBy = "system";
+                }
+                
                 var count = await _repository.BulkExpireTemporaryLimitsAsync(DateTime.UtcNow);
+                
+                _logger.LogInformation("Expired {Count} temporary limits", count);
                 return ApiResponse<int>.Ok(count, $"Expired {count} temporary limits");
             }
             catch (Exception ex)
@@ -338,5 +372,7 @@ namespace ERDM.Credit.Application.Services
                 return ApiResponse<int>.Fail(ex.Message);
             }
         }
+
+        #endregion
     }
 }
